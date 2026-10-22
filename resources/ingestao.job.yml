@@ -1,0 +1,33 @@
+# Job de Ingestão da Camada Bronze (Aula 02 - Engenheiro de Dados)
+#
+# Executa a ingestão automatizada em duas etapas:
+# 1. API pública de feriados (01_ingestao_api_gabarito)
+# 2. Data Lake via S3/boto3 (02_ingestao_boto3_gabarito) -> extrai e carrega as 9 tabelas da bronze
+
+resources:
+  jobs:
+    vertice_ingestao:
+      name: vertice_ingestao
+      description: Ingestão da camada Bronze da Vértice Tecnologia (API BrasilAPI + Data Lake S3/Supabase)
+
+      schedule:
+        quartz_cron_expression: "0 0 6 ? * MON-FRI"
+        timezone_id: America/Sao_Paulo
+
+      tasks:
+        # Tarefa 1: Ingestão da API de feriados
+        - task_key: api
+          notebook_task:
+            notebook_path: /Users/${workspace.current_user.userName}/ImersaoControlTower/01_ingestao_api_gabarito
+
+        # Tarefa 2: Ingestão do Data Lake via boto3 e carga das 9 tabelas da bronze
+        - task_key: data_lake
+          depends_on:
+            - task_key: api
+          notebook_task:
+            notebook_path: /Users/${workspace.current_user.userName}/ImersaoControlTower/02_ingestao_boto3_gabarito
+            base_parameters:
+              S3_ENDPOINT: "https://ahebbqgjfrhrytognoew.storage.supabase.co/storage/v1/s3"
+              AWS_DEFAULT_REGION: "us-east-2"
+              AWS_ACCESS_KEY_ID: "${var.aws_access_key_id}"
+              AWS_SECRET_ACCESS_KEY: "${var.aws_secret_access_key}"

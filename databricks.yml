@@ -21,6 +21,12 @@ variables:
   warehouse_id:
     description: SQL Warehouse serverless que executa as tarefas SQL
     default: "72f6049c981e743b"
+  aws_access_key_id:
+    description: AWS / Supabase Access Key ID para leitura do data lake
+    default: ""
+  aws_secret_access_key:
+    description: AWS / Supabase Secret Access Key para leitura do data lake
+    default: ""
 
 targets:
   dev:
