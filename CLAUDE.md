@@ -35,9 +35,8 @@ conexão com a noite seguinte. Depois de editar um exemplo, rode `python3 script
 
 - Carregue a skill `databricks-core` antes de qualquer ação, mais a do produto (`databricks-dabs`,
   `databricks-pipelines`, `databricks-metric-views`, `databricks-genie-agents`, `databricks-apps`…).
-- **Nunca escolha um profile sozinho.** O profile de desenvolvimento desta imersão é `imersao-out26`
-  (workspace `dbc-84cd5511-fa25`, o mesmo de agosto, que também tem `lakehouse_rotaperfume`).
-- Ambiente-alvo: **Free Edition, serverless**. Warehouse `Serverless Starter Warehouse` (`666be37e3fededf2`).
+- **Profile:** O profile ativo é `DEFAULT` (workspace `dbc-55900bb8-c180`, `https://dbc-55900bb8-c180.cloud.databricks.com`).
+- Ambiente-alvo: **Free Edition, serverless**. Warehouse `Serverless Starter Warehouse` (`72f6049c981e743b`).
 - Catálogo **`lakehouse_vertice`**. `CREATE CATALOG` só via SQL:
   a API do UC recusa no Free Edition.
 - Skills oficiais do Databricks instaladas no projeto (`.claude/skills/`, 32 com as experimentais) via

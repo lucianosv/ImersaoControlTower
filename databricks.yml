@@ -1,0 +1,37 @@
+bundle:
+  name: vertice
+
+include:
+  - resources/*.yml
+
+sync:
+  exclude:
+    - .git/**
+    - .opencode/**
+    - .claude/**
+    - aulas/**
+    - slides/**
+    - docs/**
+    - material/**
+
+variables:
+  catalog:
+    description: Catálogo do Unity Catalog
+    default: lakehouse_vertice
+  warehouse_id:
+    description: SQL Warehouse serverless que executa as tarefas SQL
+    default: "72f6049c981e743b"
+
+targets:
+  dev:
+    default: true
+    workspace:
+      host: https://dbc-55900bb8-c180.cloud.databricks.com
+    presets:
+      trigger_pause_status: PAUSED
+
+  prod:
+    mode: production
+    workspace:
+      host: https://dbc-55900bb8-c180.cloud.databricks.com
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}

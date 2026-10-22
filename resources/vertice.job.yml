@@ -1,0 +1,24 @@
+# Job do Projeto Farol - Entrega 1: conferência da bronze
+#
+# Próximas entregas irão acrescentar:
+#   prompt 2: + medalhao (pipeline Lakeflow: silver, as 3 ferramentas viram uma)
+#   prompt 3: + (o mesmo pipeline ganha a gold) + testes_de_qualidade
+#   prompt 4: + status_com_ia
+#   prompt 5: + metricas_governadas
+
+resources:
+  jobs:
+    vertice_farol:
+      name: vertice_farol
+      description: Projeto Farol da Vértice Tecnologia - conferência da bronze
+
+      schedule:
+        quartz_cron_expression: "0 0 6 ? * MON"
+        timezone_id: America/Sao_Paulo
+
+      tasks:
+        - task_key: conferencia_bronze
+          sql_task:
+            warehouse_id: ${var.warehouse_id}
+            file:
+              path: ../src/conferencia/00-conferencia-bronze.sql
