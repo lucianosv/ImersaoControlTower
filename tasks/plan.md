@@ -40,6 +40,11 @@ O bundle foi organizado em **três jobs modulares**, orquestrados por um job pri
   `presets: { trigger_pause_status: PAUSED }` para preservar recursos do Free Edition.
 - **O SQL fica no repositório**: a conferência é versionada em
   `src/conferencia/00-conferencia-bronze.sql` e o bundle a publica no workspace.
+- **Credencial em secret scope, nunca no repositório**: as duas chaves do Supabase
+  (`aws_access_key_id` e `aws_secret_access_key`) ficam no secret scope `vertice` do
+  workspace. O job passa só o que não é segredo (`S3_ENDPOINT`, `AWS_DEFAULT_REGION`) e o
+  notebook busca as chaves no escopo, com queda para os widgets quando rodado na mão.
+  O YAML do job e o código do notebook não carregam chave nenhuma.
 
 ## Jobs Definidos no Bundle
 
@@ -77,9 +82,28 @@ Orquestrador da esteira. Não tem SQL próprio: só dispara os outros jobs.
 - **Próximas entregas** (prompts 2 a 5): acrescentar aqui as etapas
   `medalhao` (silver), `testes_de_qualidade`, `status_com_ia` e `metricas_governadas`
 
+## Tempos Medidos (21/10/2026, run 1094465655922702)
+
+| Etapa | Duração |
+|---|---|
+| `api` (feriados, BrasilAPI) | 66 s |
+| `data_lake` (S3/Supabase → 9 tabelas) | 104 s |
+| **Ingestão completa** | **2 min 57 s** |
+| `conferencia_bronze` (SQL, 9 tabelas) | 12 s |
+| **Esteira completa** | **3 min 20 s** |
+
+O warehouse serverless é o gargalo no início do run (acorda sob demanda); a validação, já com o
+warehouse quente, leva segundos.
+
 ## Como Rodar
 
 ```bash
+# 1. Uma vez: cadastrar as chaves do Supabase no secret scope do workspace
+databricks secrets create-scope vertice --initial-manage-principal users --profile DEFAULT
+databricks secrets put-secret vertice aws_access_key_id     --string-value <id>     --profile DEFAULT
+databricks secrets put-secret vertice aws_secret_access_key --string-value <chave>  --profile DEFAULT
+
+# 2. Publicar e rodar
 databricks bundle validate --profile DEFAULT   # confere o YAML
 databricks bundle deploy   --profile DEFAULT   # publica os 3 jobs
 databricks bundle run vertice_farol --profile DEFAULT   # roda a esteira inteira
@@ -91,6 +115,8 @@ Para rodar só a validação (a bronze já carregada):
 databricks bundle run vertice_validacao_bronze --profile DEFAULT
 ```
 
+O escopo é o mesmo no `dev` e no `prod`: os dois targets apontam para o mesmo workspace.
+
 ## Status Atual
 
 - [x] Bundle `vertice` com 3 jobs (`vertice_farol`, `vertice_ingestao_bronze`, `vertice_validacao_bronze`)
@@ -99,7 +125,10 @@ databricks bundle run vertice_validacao_bronze --profile DEFAULT
 - [x] `databricks bundle run vertice_farol` verde: 3 min 20 s (ingestão ~3 min + validação 12 s)
 - [x] Conferência confere as 9 tabelas: todas batem com o seed 42
 - [x] Cronograma e variáveis do bundle ajustados ao workspace `dbc-55900bb8-c180`
-- [ ] Migrar as credenciais do S3 do job para as variáveis do bundle (hoje estão no YAML)
+- [x] Credenciais do S3 migradas para o secret scope `vertice` (fora do repositório)
+- [x] Pipeline verde com o escopo: ingestão 2 min 15 s + validação 12 s, bronze com as 9 tabelas
+- [ ] Rotacionar a chave do Supabase (a que estava no commit `14e8de0` continua no histórico do git)
+- [ ] Quando os jobs passarem a ter agendamento (segunda 6h), revisar o `PAUSED` do target `dev`
 
 ## Riscos e Mitigações
 

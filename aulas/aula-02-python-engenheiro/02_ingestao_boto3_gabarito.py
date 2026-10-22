@@ -1,4 +1,8 @@
 # Databricks notebook source
+# /// script
+# [tool.databricks.environment]
+# environment_version = "6"
+# ///
 # MAGIC %md
 # MAGIC # Noite 2 · 2 de 2 · Ingestão do data lake com boto3 · gabarito
 
@@ -23,12 +27,16 @@
 # MAGIC
 # MAGIC ## Configuração: as chaves chegam pelo ambiente
 # MAGIC
-# MAGIC A chave **não fica escrita no código**. O notebook lê tudo de `os.environ`, as variáveis de ambiente,
-# MAGIC como em qualquer servidor ou na própria AWS. Quem preenche os valores é o **job**: cada parâmetro do job
-# MAGIC chega ao notebook como um *widget* com o mesmo nome, e a célula abaixo passa os widgets para o ambiente.
+# MAGIC A chave **não fica escrita no código** nem no YAML do job. O notebook lê tudo de `os.environ`, as
+# MAGIC variáveis de ambiente, como em qualquer servidor ou na própria AWS.
 # MAGIC
+# MAGIC - **Padrão da empresa:** as duas chaves do Supabase vivem no **secret scope** `vertice`
+# MAGIC   (`aws_access_key_id` e `aws_secret_access_key`). A célula abaixo busca lá primeiro; quem roda o
+# MAGIC   job não precisa ver, digitar ou guardar nada. Use `databricks secrets put-secret vertice <chave>`
+# MAGIC   para cadastrar ou rotacionar.
 # MAGIC - **Rodando na mão:** aparecem 4 caixinhas no topo do notebook. Cole os valores da tabela de conexão.
-# MAGIC - **Rodando pelo job:** os valores vêm dos **Parameters** da tarefa (etapa 4). Ninguém digita nada.
+# MAGIC - **Rodando pelo job:** os valores podem vir dos **Parameters** da tarefa (etapa 4), se alguém
+# MAGIC   ainda preencher assim.
 # MAGIC - **Ou pelo campo Environment variables (Beta)** da tarefa: aí os valores já chegam no `os.environ`, e a
 # MAGIC   célula usa direto, sem caixinha.
 # MAGIC
@@ -39,20 +47,55 @@
 
 import os
 
+# limpa env vars do kernel anterior (podem ter valores corrompidos)
+for _nome in ["S3_ENDPOINT", "AWS_DEFAULT_REGION", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"]:
+    os.environ.pop(_nome, None)
+
 VARIAVEIS = ["S3_ENDPOINT", "AWS_DEFAULT_REGION", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"]
+
+# As credenciais NÃO ficam no código nem no job: vivem num secret scope do Databricks.
+# O endpoint e a região não são segredo e podem ser fixos.
+ESCOPO = "vertice"
+SEGREDOS = {"AWS_ACCESS_KEY_ID": "aws_access_key_id", "AWS_SECRET_ACCESS_KEY": "aws_secret_access_key"}
+PLACEHOLDERS = {
+    "S3_ENDPOINT": "https://lpsmdtcpedhaxchkbuiw.storage.supabase.co/storage/v1/s3",
+    "AWS_DEFAULT_REGION": "us-west-2",
+}
+
+
+def do_scope(chave):
+    """Lê o segredo do escopo. Devolve None se o escopo não existir ou a chave faltar."""
+    try:
+        return dbutils.secrets.get(ESCOPO, chave)
+    except Exception:
+        return None
+
 
 for nome in VARIAVEIS:
     if os.environ.get(nome):                       # já veio do job (Environment variables)? usa esse
         continue
-    dbutils.widgets.text(nome, "")                 # senão, a caixinha (o job preenche pelos Parameters)
-    os.environ[nome] = dbutils.widgets.get(nome)   # e o valor vira variável de ambiente
+    segredo = do_scope(SEGREDOS[nome]) if nome in SEGREDOS else None
+    if segredo:                                    # veio do secret scope: usa direto
+        os.environ[nome] = segredo
+        continue
+    try:
+        dbutils.widgets.remove(nome)                # limpa widget antigo (valor pode estar corrompido)
+    except Exception:
+        pass
+    dbutils.widgets.text(nome, PLACEHOLDERS.get(nome, ""))  # cria a caixinha para visualização
+    widget_val = dbutils.widgets.get(nome)
+    # se o widget trouxer um valor válido (preenchido pelo job), usa ele;
+    # senão fica vazio e a célula avisa o que falta
+    os.environ[nome] = widget_val if widget_val and "<projeto>" not in widget_val and "cole_aqui" not in widget_val else PLACEHOLDERS.get(nome, "")
 
-faltando = [nome for nome in VARIAVEIS if not os.environ[nome]]
-assert not faltando, f"preencha: {faltando}"      # para aqui se faltar alguma chave
-
-S3_BUCKET = "DataLakeCentralTower"
-RAW = "/Volumes/lakehouse_vertice/bronze/raw"
-print("ambiente pronto:", os.environ["S3_ENDPOINT"])
+faltando = [nome for nome in VARIAVEIS if not os.environ[nome] or "cole_aqui" in os.environ[nome]]
+if faltando:
+    print("⚠️  Preencha as caixinhas no topo do notebook e rode esta célula de novo:")
+    print("   ", faltando)
+else:
+    S3_BUCKET = "DataLakeVertice"
+    RAW = "/Volumes/lakehouse_vertice/bronze/raw"
+    print("ambiente pronto:", os.environ["S3_ENDPOINT"])
 
 # COMMAND ----------
 

@@ -95,6 +95,19 @@ job, pelos parâmetros. Um passo além, em produção: guardar a chave num *secr
 O bucket é `DataLakeCentralTower` (maiúsculas e minúsculas contam). Esses valores entram como **Job parameters** (etapa 4) ou nas caixinhas do topo do
 notebook, quando você roda na mão.
 
+> **Como é numa empresa (e como está no bundle `vertice` da raiz do repositório):** a chave não vai
+> nem no job nem no código. Ela vive num **secret scope** do Databricks, e o notebook busca lá:
+>
+> ```bash
+> databricks secrets create-scope vertice --initial-manage-principal users --profile P
+> databricks secrets put-secret vertice aws_access_key_id     --string-value <id>    --profile P
+> databricks secrets put-secret vertice aws_secret_access_key --string-value <chave> --profile P
+> ```
+>
+> O job passa só o que não é segredo (`S3_ENDPOINT`, `AWS_DEFAULT_REGION`) e o notebook lê
+> `dbutils.secrets.get("vertice", "aws_access_key_id")`. Quem roda o job não vê, não digita e não
+> guarda nada. Para trocar a chave, `put-secret` de novo — sem deploy.
+
 ---
 
 ## 🚀 Passo a passo

@@ -21,12 +21,10 @@ variables:
   warehouse_id:
     description: SQL Warehouse serverless que executa as tarefas SQL
     default: "72f6049c981e743b"
-  aws_access_key_id:
-    description: AWS / Supabase Access Key ID para leitura do data lake
-    default: ""
-  aws_secret_access_key:
-    description: AWS / Supabase Secret Access Key para leitura do data lake
-    default: ""
+  # As chaves do Supabase NÃO são variáveis do bundle: vivem no secret scope
+  # "vertice" do workspace (aws_access_key_id / aws_secret_access_key).
+  # Criar: databricks secrets create-scope vertice --initial-manage-principal users
+  # Gravar: databricks secrets put-secret vertice aws_access_key_id --string-value <valor>
 
 targets:
   dev:

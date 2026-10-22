@@ -36,6 +36,8 @@
 - [ ] Criar Metric Views e vincular ao Genie / Dashboard
 
 ## Higiene do Repositório
-- [ ] Tirar as credenciais do S3 do YAML `resources/ingestao_bronze.job.yml` e usar as
-      variáveis `aws_access_key_id` / `aws_secret_access_key` do `databricks.yml`
-- [ ] Rodar `git rm --cached` do segredo já commitado e rotacionar a chave no Supabase
+- [x] Secret scope `vertice` criado no workspace com `aws_access_key_id` e `aws_secret_access_key`
+- [x] Chaves fora do `resources/ingestao_bronze.job.yml` e fora do notebook
+- [x] Notebook buscando a chave no escopo (com queda para os widgets quando rodado na mão)
+- [x] `databricks.yml` sem as variáveis de credencial mortas (o escopo é o mecanismo)
+- [ ] Rotacionar a chave do Supabase e limpar o histórico do git (`14e8de0` ainda tem a chave antiga)
