@@ -5,7 +5,12 @@ Os slides embutem estes arquivos. Enquanto um print não existe, o slide mostra 
 exato, e rode `python3 scripts/gerar_slides.py slides/imersao.slides.html`.
 
 Dica: janela do navegador em 1600 × 900 (ou tela cheia), tema do Databricks escuro, zoom 100%.
-Workspace: `https://dbc-84cd5511-fa25.cloud.databricks.com` (o `?o=1253341796019093` é adicionado sozinho).
+Workspace: `https://dbc-55900bb8-c180.cloud.databricks.com` (o `?o=7474652991272888` é adicionado sozinho).
+
+> **Os IDs de recurso deste arquivo são da sessão de referência** (o workspace antigo,
+> `dbc-84cd5511-fa25`). Neste workspace eles não existem: o job, o pipeline, os dashboards, os Genies
+> e o app são criados no seu workspace, com outros IDs. Troque cada URL pelo caminho real do recurso
+> depois de criá-lo — o `databricks bundle summary --profile DEFAULT` mostra a URL do job do bundle.
 
 ## Noite 1 · Analista
 

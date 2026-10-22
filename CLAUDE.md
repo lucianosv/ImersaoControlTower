@@ -138,12 +138,12 @@ Genie sem curadoria erra as 4 perguntas do dono (ensaio 18/10).
 ## Comandos
 
 ```bash
-python3 scripts/run_sql.py <arquivo.sql> --profile imersao-out26 [--continuar] [--quiet]
-python3 aulas/aula-01-analista-sql/gerar_dashboard.py --deploy --profile imersao-out26
-python3 scripts/genie.py publicar <espaco.json> --titulo "..." --profile imersao-out26
-python3 scripts/genie.py perguntar "<título>" "pergunta" --profile imersao-out26
-python3 scripts/genie.py benchmark "<título>" <benchmark.json> --profile imersao-out26
-python3 scripts/gerar_notebooks.py aulas/aula-01-analista-sql [--importar --profile imersao-out26]
+python3 scripts/run_sql.py <arquivo.sql> --profile DEFAULT [--continuar] [--quiet]
+python3 aulas/aula-01-analista-sql/gerar_dashboard.py --deploy --profile DEFAULT
+python3 scripts/genie.py publicar <espaco.json> --titulo "..." --profile DEFAULT
+python3 scripts/genie.py perguntar "<título>" "pergunta" --profile DEFAULT
+python3 scripts/genie.py benchmark "<título>" <benchmark.json> --profile DEFAULT
+python3 scripts/gerar_notebooks.py aulas/aula-01-analista-sql [--importar --profile DEFAULT]
 python3 scripts/gerar_slides.py slides/imersao.slides.html
 python3 scripts/gerar_prompts.py                 # regera o PROMPTS.md a partir de aulas/*/prd/prompt-*.md
 ```

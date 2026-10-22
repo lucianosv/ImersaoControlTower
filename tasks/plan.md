@@ -45,6 +45,9 @@ O bundle foi organizado em **três jobs modulares**, orquestrados por um job pri
   workspace. O job passa só o que não é segredo (`S3_ENDPOINT`, `AWS_DEFAULT_REGION`) e o
   notebook busca as chaves no escopo, com queda para os widgets quando rodado na mão.
   O YAML do job e o código do notebook não carregam chave nenhuma.
+- **Um data lake só na noite**: a aquecimento e a ingestão apontam para o mesmo bucket
+  (`DataLakeVertice`, endpoint `lpsmdtcpedhaxchkbuiw`, região `us-west-2`). O
+  `pmo/projetos.csv` que o aquecimento lê é o mesmo que a ingestão deixa no volume.
 
 ## Jobs Definidos no Bundle
 

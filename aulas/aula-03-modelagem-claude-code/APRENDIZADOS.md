@@ -1,6 +1,6 @@
 # Aprendizados do ensaio da noite 3 · Free Edition, 18/10/2026
 
-Medido no workspace `dbc-84cd5511` (profile `imersao-out26`), sobre a gold da noite 2 (Vértice Tecnologia).
+Medido no workspace `dbc-55900bb8-c180` (profile `DEFAULT`), sobre a gold da noite 2 (Vértice Tecnologia).
 
 ## O que falhou e como foi resolvido
 

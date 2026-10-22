@@ -37,7 +37,10 @@
 
 ## Higiene do Repositório
 - [x] Secret scope `vertice` criado no workspace com `aws_access_key_id` e `aws_secret_access_key`
-- [x] Chaves fora do `resources/ingestao_bronze.job.yml` e fora do notebook
-- [x] Notebook buscando a chave no escopo (com queda para os widgets quando rodado na mão)
+- [x] Chaves fora do `resources/ingestao_bronze.job.yml` e fora dos notebooks
+- [x] Notebook de ingestão buscando a chave no escopo (com queda para os widgets quando rodado na mão)
+- [x] Notebook de aquecimento apontando para o mesmo data lake (`DataLakeVertice`) e lendo a chave do escopo
 - [x] `databricks.yml` sem as variáveis de credencial mortas (o escopo é o mecanismo)
+- [x] Referências do material corrigidas para os nomes em uso (bucket, endpoint, região, job, profile)
 - [ ] Rotacionar a chave do Supabase e limpar o histórico do git (`14e8de0` ainda tem a chave antiga)
+- [ ] Decidir o destino das pastas `aulas/z_aula-*_old` (material arquivado, com o workspace antigo)

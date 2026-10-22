@@ -1,4 +1,8 @@
 # Databricks notebook source
+# /// script
+# [tool.databricks.environment]
+# environment_version = "6"
+# ///
 # MAGIC %md
 # MAGIC # Noite 2 · Aquecimento de Python · gabarito
 
@@ -294,12 +298,31 @@ display(df_estados[df_estados["regiao"] == "Norte"])
 import boto3
 
 # os valores estão na tabela de conexão, no começo deste README
-S3_ENDPOINT = "https://ahebbqgjfrhrytognoew.storage.supabase.co/storage/v1/s3"
-S3_REGION = "us-east-2"
-S3_BUCKET = "DataLakeCentralTower"
+S3_ENDPOINT = "https://lpsmdtcpedhaxchkbuiw.storage.supabase.co/storage/v1/s3"
+S3_REGION = "us-west-2"
+S3_BUCKET = "DataLakeVertice"
 
-ACCESS_KEY = "COLE-AQUI"     # passada na aula
-SECRET_KEY = "COLE-AQUI"     # passada na aula
+# As chaves vêm do secret scope "vertice" (mesmo da ingestão da noite 2).
+# Rodando na mão sem escopo, cole os valores nas caixinhas.
+ESCOPO = "vertice"
+
+
+def do_scope(chave):
+    """Lê o segredo do escopo. Devolve None se o escopo não existir ou a chave faltar."""
+    try:
+        return dbutils.secrets.get(ESCOPO, chave)
+    except Exception:
+        return None
+
+
+ACCESS_KEY = do_scope("aws_access_key_id")
+SECRET_KEY = do_scope("aws_secret_access_key")
+
+if not ACCESS_KEY or not SECRET_KEY:          # sem escopo: pede na caixinha
+    dbutils.widgets.text("ACCESS_KEY", "")
+    dbutils.widgets.text("SECRET_KEY", "")
+    ACCESS_KEY = ACCESS_KEY or dbutils.widgets.get("ACCESS_KEY")
+    SECRET_KEY = SECRET_KEY or dbutils.widgets.get("SECRET_KEY")
 
 from botocore.config import Config
 

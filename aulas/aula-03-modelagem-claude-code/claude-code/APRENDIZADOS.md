@@ -1,6 +1,6 @@
 # Aprendizados do ensaio da noite 2 · Free Edition, 18/10/2026
 
-Medido no workspace `dbc-84cd5511` (profile `imersao-out26`), construindo o
+Medido no workspace `dbc-55900bb8-c180` (profile `DEFAULT`), construindo o
 bundle `vertice` sobre a bronze da noite 1.
 
 ## O que falhou e como foi resolvido

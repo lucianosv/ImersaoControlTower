@@ -1,4 +1,8 @@
 # Databricks notebook source
+# /// script
+# [tool.databricks.environment]
+# environment_version = "6"
+# ///
 # MAGIC %md
 # MAGIC # Noite 2 · Aquecimento de Python
 # MAGIC ### Tudo o que você precisa saber antes do pipeline
@@ -344,12 +348,28 @@ display(df_estados.head())
 import boto3
 
 # os valores estão na tabela de conexão, no README da noite 2
-S3_ENDPOINT = "https://ahebbqgjfrhrytognoew.storage.supabase.co/storage/v1/s3"
-S3_REGION = "us-east-2"
-S3_BUCKET = "DataLakeCentralTower"
+S3_ENDPOINT = "https://lpsmdtcpedhaxchkbuiw.storage.supabase.co/storage/v1/s3"
+S3_REGION = "us-west-2"
+S3_BUCKET = "DataLakeVertice"
 
 ACCESS_KEY = "COLE-AQUI"     # passada na aula
 SECRET_KEY = "COLE-AQUI"     # passada na aula
+
+# Numa empresa a chave não se escreve no código: ela vem do secret scope "vertice".
+# A célula abaixo tenta o escopo primeiro; se não houver escopo, usa o que está nas caixinhas.
+ESCOPO = "vertice"
+
+
+def do_scope(chave):
+    """Lê o segredo do escopo. Devolve None se o escopo não existir ou a chave faltar."""
+    try:
+        return dbutils.secrets.get(ESCOPO, chave)
+    except Exception:
+        return None
+
+
+ACCESS_KEY = do_scope("aws_access_key_id") or ACCESS_KEY
+SECRET_KEY = do_scope("aws_secret_access_key") or SECRET_KEY
 
 # escreva seu código aqui: s3 = boto3.client(...) e depois liste os buckets
 # atenção: o Supabase exige o bucket no caminho da URL. Passe também:
@@ -360,7 +380,7 @@ SECRET_KEY = "COLE-AQUI"     # passada na aula
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC **Objetivo:** listar os arquivos do bucket `DataLakeCentralTower`, imprimindo o nome e o tamanho de cada um.
+# MAGIC **Objetivo:** listar os arquivos do bucket `DataLakeVertice`, imprimindo o nome e o tamanho de cada um.
 # MAGIC
 # MAGIC Dica: `s3.list_objects_v2(Bucket=S3_BUCKET)["Contents"]`, onde cada item tem `"Key"` e `"Size"`.
 

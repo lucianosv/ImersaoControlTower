@@ -1,6 +1,6 @@
 # Aprendizados do ensaio da noite 4 · Free Edition, outubro/2026
 
-Medido no workspace `dbc-84cd5511` (profile `imersao-out26`). A primeira parte vale para qualquer case: são
+Medido no workspace `dbc-55900bb8-c180` (profile `DEFAULT`). A primeira parte vale para qualquer case: são
 as armadilhas da plataforma. A segunda é do case da Vértice (18/10/2026).
 
 ## O que falhou e como foi resolvido (plataforma)
