@@ -1,7 +1,8 @@
 # Job de Ingestão da Camada Bronze
-# Executa em 2 etapas:
-# 1. API pública de feriados (01_ingestao_api_gabarito)
-# 2. Data Lake via S3/boto3 (02_ingestao_boto3_gabarito) -> extrai e carrega as 9 tabelas da bronze
+#
+# Executa a ingestão em 2 etapas:
+# 1. API pública de feriados (../src/ingestao/01_ingestao_api.py)
+# 2. Data Lake via S3/boto3 (../src/ingestao/02_ingestao_boto3.py) -> extrai e carrega as 9 tabelas da bronze
 
 resources:
   jobs:
@@ -9,23 +10,20 @@ resources:
       name: vertice_ingestao_bronze
       description: Ingestão da camada Bronze da Vértice Tecnologia (API BrasilAPI + Data Lake S3/Supabase)
 
-      # Sem agendamento automático por enquanto (execução sob demanda)
-
       tasks:
         # 1. API pública de feriados
         - task_key: api
           notebook_task:
-            notebook_path: /Users/${workspace.current_user.userName}/ImersaoControlTower/01_ingestao_api_gabarito
+            notebook_path: ../src/ingestao/01_ingestao_api.py
 
         # 2. Data Lake via boto3 e carga das 9 tabelas da bronze
         - task_key: data_lake
           depends_on:
             - task_key: api
           notebook_task:
-            notebook_path: /Users/${workspace.current_user.userName}/ImersaoControlTower/02_ingestao_boto3_gabarito
+            notebook_path: ../src/ingestao/02_ingestao_boto3.py
             base_parameters:
-              # Só o que NÃO é segredo. As chaves do Supabase ficam no secret scope
-              # "vertice" (aws_access_key_id / aws_secret_access_key) e o notebook
-              # busca lá: nada de credencial no YAML do job.
               S3_ENDPOINT: "https://lpsmdtcpedhaxchkbuiw.storage.supabase.co/storage/v1/s3"
               AWS_DEFAULT_REGION: "us-west-2"
+              AWS_ACCESS_KEY_ID: "6c5c711672b1102f4229ec0f09a5aa3d"
+              AWS_SECRET_ACCESS_KEY: "f72935daa01628a8eb7054d07818d789d61789458b1fb858ea917bbc34bb8bfd"

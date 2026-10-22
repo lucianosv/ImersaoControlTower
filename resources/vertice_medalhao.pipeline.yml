@@ -1,0 +1,18 @@
+# Pipeline Declarativo do Medalhão (Lakeflow Spark Declarative Pipelines)
+#
+# Processa as camadas Silver e Gold da Vértice Tecnologia.
+# O schema padrão é silver e o catálogo é ${var.catalog} (lakehouse_vertice).
+# O Lakeflow lê as dependências dos SQLs e orquestra a execução automaticamente.
+
+resources:
+  pipelines:
+    vertice_medalhao:
+      name: vertice_medalhao
+      catalog: ${var.catalog}
+      schema: silver
+      serverless: true
+      photon: true
+      channel: CURRENT
+      libraries:
+        - glob:
+            include: ../src/silver/**
