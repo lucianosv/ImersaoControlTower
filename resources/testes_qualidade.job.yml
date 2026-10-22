@@ -1,0 +1,21 @@
+# Job de Testes de Qualidade (Nível 2 / Nível 3)
+#
+# Executa a suite de 10 testes de qualidade automatizados em SQL:
+#   - Integridade referencial
+#   - Regras de negócio (melancias, estouro de orçamento, ociosidade)
+#   - Consistência das camadas Silver e Gold
+#
+# Pode ser executado a qualquer momento isoladamente no SQL Warehouse.
+
+resources:
+  jobs:
+    vertice_testes_qualidade:
+      name: vertice_testes_qualidade
+      description: Suite de 10 testes de qualidade automatizados da Vértice Tecnologia
+
+      tasks:
+        - task_key: suite_testes
+          sql_task:
+            warehouse_id: ${var.warehouse_id}
+            file:
+              path: ../src/testes/testes.sql

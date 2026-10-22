@@ -1,0 +1,23 @@
+# Pipeline Declarativo da Camada Silver (Nível 2)
+#
+# Processa exclusivamente a camada Silver da Vértice Tecnologia:
+#   - silver.projetos
+#   - silver.tarefas (unificação ClickUp, Excel e MS Project)
+#   - silver.custos
+#   - silver.pessoas
+#   - silver.fornecedores
+#
+# Pode ser executado de forma totalmente independente para testes, depuração e reprocessamento.
+
+resources:
+  pipelines:
+    vertice_camada_silver:
+      name: vertice_camada_silver
+      catalog: ${var.catalog}
+      schema: silver
+      serverless: true
+      photon: true
+      channel: CURRENT
+      libraries:
+        - glob:
+            include: ../src/silver/**

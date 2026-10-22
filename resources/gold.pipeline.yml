@@ -1,0 +1,22 @@
+# Pipeline Declarativo da Camada Gold (Nível 2)
+#
+# Processa exclusivamente a camada Gold da Vértice Tecnologia:
+#   - gold.fato_projeto_semana (evolução temporal EVM)
+#   - gold.projeto_situacao_atual (fotografia e KPIs de projetos)
+#   - gold.utilizacao_pessoa_semana (alocação de equipe)
+#
+# Lê as tabelas da camada Silver e materializa as visões de negócio da Gold.
+# Pode ser executado de forma totalmente independente para testes, depuração e reprocessamento.
+
+resources:
+  pipelines:
+    vertice_camada_gold:
+      name: vertice_camada_gold
+      catalog: ${var.catalog}
+      schema: silver
+      serverless: true
+      photon: true
+      channel: CURRENT
+      libraries:
+        - glob:
+            include: ../src/gold/**

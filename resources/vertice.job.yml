@@ -2,32 +2,43 @@
 #
 # Orquestra a esteira completa da Vértice Tecnologia em sequência estrita (sem concorrência):
 #   1. Camada Bronze (Job vertice_camada_bronze -> API -> Data Lake -> Validação)
-#   2. Medalhão Silver + Gold (Pipeline DLT vertice_medalhao em 1 única máquina DLT)
-#   3. Testes de Qualidade (SQL Task testes.sql no SQL Warehouse)
+#   2. Camada Silver (Pipeline DLT independente vertice_camada_silver)
+#   3. Camada Gold (Pipeline DLT independente vertice_camada_gold)
+#   4. Testes de Qualidade (SQL Task testes.sql no SQL Warehouse)
+#
+# Cada camada roda apenas após o término com sucesso da anterior,
+# garantindo o uso de no máximo 1 máquina por vez (compatível com cota Free Tier).
 
 resources:
   jobs:
     vertice_farol:
       name: vertice_farol
-      description: Pipeline Farol da Vértice Tecnologia - Orquestração sequencial sem concorrência (Bronze -> Medalhão -> Testes)
+      description: Pipeline Farol da Vértice Tecnologia - Orquestração sequencial sem concorrência (Bronze -> Silver -> Gold -> Testes)
 
       tasks:
-        # Etapa 1: Ingestão e Validação da Bronze (sequencial)
+        # Etapa 1: Ingestão e Validação da Bronze
         - task_key: camada_bronze
           run_job_task:
             job_id: ${resources.jobs.vertice_camada_bronze.id}
 
-        # Etapa 2: Medalhão Declarativo (só inicia quando a Bronze estiver 100% pronta)
-        - task_key: medalhao
+        # Etapa 2: Pipeline da Camada Silver
+        - task_key: camada_silver
           depends_on:
             - task_key: camada_bronze
           pipeline_task:
-            pipeline_id: ${resources.pipelines.vertice_medalhao.id}
+            pipeline_id: ${resources.pipelines.vertice_camada_silver.id}
 
-        # Etapa 3: Testes de Qualidade (só inicia quando o Medalhão terminar)
+        # Etapa 3: Pipeline da Camada Gold
+        - task_key: camada_gold
+          depends_on:
+            - task_key: camada_silver
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.vertice_camada_gold.id}
+
+        # Etapa 4: Testes de Qualidade
         - task_key: testes_de_qualidade
           depends_on:
-            - task_key: medalhao
+            - task_key: camada_gold
           sql_task:
             warehouse_id: ${var.warehouse_id}
             file:
