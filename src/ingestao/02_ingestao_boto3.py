@@ -19,7 +19,7 @@
 # MAGIC muda só o `endpoint_url`.
 # MAGIC
 # MAGIC Os três passos de toda ingestão:
-# MAGIC 1. **extrair** · o `boto3` lista e baixa cada arquivo do bucket `DataLakeVertice`
+# MAGIC 1. **extrair** · o `boto3` lista e baixa cada arquivo do bucket `DataLakeCentralTower`
 # MAGIC 2. **pousar** · cada arquivo vai para o volume, no mesmo caminho: `/Volumes/lakehouse_vertice/bronze/raw/`
 # MAGIC 3. **carregar** · o mesmo `read_files` de ontem transforma o raw nas 9 tabelas da bronze
 # MAGIC

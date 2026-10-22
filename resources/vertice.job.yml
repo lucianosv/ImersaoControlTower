@@ -25,9 +25,18 @@ resources:
           run_job_task:
             job_id: ${resources.jobs.vertice_validacao_bronze.id}
 
-        # Etapa 3: Medalhão (Camada Silver com integração das 3 ferramentas)
+        # Etapa 3: Medalhão (Camadas Silver e Gold com integração das 3 ferramentas)
         - task_key: medalhao
           depends_on:
             - task_key: validacao_bronze
           pipeline_task:
             pipeline_id: ${resources.pipelines.vertice_medalhao.id}
+
+        # Etapa 4: Testes de Qualidade (Quebra o job se algo estiver errado)
+        - task_key: testes_de_qualidade
+          depends_on:
+            - task_key: medalhao
+          sql_task:
+            warehouse_id: ${var.warehouse_id}
+            file:
+              path: ../src/testes/testes.sql
