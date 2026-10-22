@@ -1,38 +1,30 @@
-# Pipeline Principal Farol (Torre de Controle)
+# Pipeline Principal Farol (Torre de Controle) - Orquestrador Geral (Nível 1)
 #
-# Orquestra a esteira completa da Vértice Tecnologia na sequência:
-#   1. Ingestão Bronze (API + Data Lake S3)
-#   2. Validação Bronze (Conferência das 9 tabelas)
-#   3. Medalhão (Pipeline declarativo Lakeflow da Silver e Gold)
-#   4. (Próximas entregas): IA nos textos, Métricas governadas
+# Orquestra a esteira completa da Vértice Tecnologia em sequência estrita (sem concorrência):
+#   1. Camada Bronze (Job vertice_camada_bronze -> API -> Data Lake -> Validação)
+#   2. Medalhão Silver + Gold (Pipeline DLT vertice_medalhao em 1 única máquina DLT)
+#   3. Testes de Qualidade (SQL Task testes.sql no SQL Warehouse)
 
 resources:
   jobs:
     vertice_farol:
       name: vertice_farol
-      description: Pipeline Farol da Vértice Tecnologia - Orquestração completa de Ingestão, Validação e Medalhão
+      description: Pipeline Farol da Vértice Tecnologia - Orquestração sequencial sem concorrência (Bronze -> Medalhão -> Testes)
 
       tasks:
-        # Etapa 1: Ingestão da Bronze
-        - task_key: ingestao_bronze
+        # Etapa 1: Ingestão e Validação da Bronze (sequencial)
+        - task_key: camada_bronze
           run_job_task:
-            job_id: ${resources.jobs.vertice_ingestao_bronze.id}
+            job_id: ${resources.jobs.vertice_camada_bronze.id}
 
-        # Etapa 2: Validação da Bronze
-        - task_key: validacao_bronze
-          depends_on:
-            - task_key: ingestao_bronze
-          run_job_task:
-            job_id: ${resources.jobs.vertice_validacao_bronze.id}
-
-        # Etapa 3: Medalhão (Camadas Silver e Gold com integração das 3 ferramentas)
+        # Etapa 2: Medalhão Declarativo (só inicia quando a Bronze estiver 100% pronta)
         - task_key: medalhao
           depends_on:
-            - task_key: validacao_bronze
+            - task_key: camada_bronze
           pipeline_task:
             pipeline_id: ${resources.pipelines.vertice_medalhao.id}
 
-        # Etapa 4: Testes de Qualidade (Quebra o job se algo estiver errado)
+        # Etapa 3: Testes de Qualidade (só inicia quando o Medalhão terminar)
         - task_key: testes_de_qualidade
           depends_on:
             - task_key: medalhao

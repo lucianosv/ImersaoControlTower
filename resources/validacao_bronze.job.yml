@@ -1,13 +1,14 @@
-# Job de Validação / Conferência da Camada Bronze
+# Job Atômico (Nível 3): Validação da Camada Bronze
 #
 # Executa a query de conferência das 9 tabelas da bronze contra a contagem esperada (seed 42).
 # Se houver divergência, aciona raise_error() e interrompe o pipeline.
+# Pode ser disparado isoladamente para reprocessamento cirúrgico.
 
 resources:
   jobs:
     vertice_validacao_bronze:
       name: vertice_validacao_bronze
-      description: Validação e conferência de integridade das 9 tabelas da Bronze
+      description: Validação e conferência atômica de integridade das 9 tabelas da Bronze
 
       tasks:
         - task_key: conferencia_bronze

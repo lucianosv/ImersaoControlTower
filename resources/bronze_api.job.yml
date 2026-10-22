@@ -1,0 +1,15 @@
+# Job Atômico (Nível 3): Ingestão da API de Feriados
+#
+# Executa apenas a ingestão da API pública BrasilAPI.
+# Pode ser disparado isoladamente para reprocessamento cirúrgico.
+
+resources:
+  jobs:
+    vertice_bronze_api:
+      name: vertice_bronze_api
+      description: Ingestão atômica da API pública de feriados (BrasilAPI)
+
+      tasks:
+        - task_key: api
+          notebook_task:
+            notebook_path: ../src/ingestao/01_ingestao_api.py

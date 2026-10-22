@@ -1,0 +1,32 @@
+# Orquestrador da Camada Bronze (Nível 2)
+#
+# Encadeia os jobs atômicos da Bronze na sequência:
+#   1. Ingestão API (vertice_bronze_api)
+#   2. Ingestão Data Lake S3 (vertice_bronze_datalake)
+#   3. Validação e Conferência (vertice_validacao_bronze)
+
+resources:
+  jobs:
+    vertice_camada_bronze:
+      name: vertice_camada_bronze
+      description: Orquestrador da Camada Bronze - Executa API, Data Lake e Validação
+
+      tasks:
+        # Etapa 1: API de Feriados
+        - task_key: api
+          run_job_task:
+            job_id: ${resources.jobs.vertice_bronze_api.id}
+
+        # Etapa 2: Data Lake S3
+        - task_key: datalake
+          depends_on:
+            - task_key: api
+          run_job_task:
+            job_id: ${resources.jobs.vertice_bronze_datalake.id}
+
+        # Etapa 3: Validação da Bronze
+        - task_key: validacao
+          depends_on:
+            - task_key: datalake
+          run_job_task:
+            job_id: ${resources.jobs.vertice_validacao_bronze.id}
