@@ -1,24 +1,27 @@
-# Job do Projeto Farol - Entrega 1: conferência da bronze
+# Pipeline Principal Farol (Torre de Controle)
 #
-# Próximas entregas irão acrescentar:
-#   prompt 2: + medalhao (pipeline Lakeflow: silver, as 3 ferramentas viram uma)
-#   prompt 3: + (o mesmo pipeline ganha a gold) + testes_de_qualidade
-#   prompt 4: + status_com_ia
-#   prompt 5: + metricas_governadas
+# Orquestra os jobs modulares da Vértice Tecnologia na sequência da esteira:
+#   1. Ingestão Bronze (API + Data Lake S3)
+#   2. Validação Bronze (Conferência das 9 tabelas)
+#   3. (Próximas entregas): Silver, Gold, IA, Métricas
 
 resources:
   jobs:
     vertice_farol:
       name: vertice_farol
-      description: Projeto Farol da Vértice Tecnologia - conferência da bronze
+      description: Pipeline Farol da Vértice Tecnologia - Orquestração completa de Ingestão, Validação e Camadas
 
-      schedule:
-        quartz_cron_expression: "0 0 6 ? * MON"
-        timezone_id: America/Sao_Paulo
+      # Sem agendamento automático por enquanto (execução sob demanda)
 
       tasks:
-        - task_key: conferencia_bronze
-          sql_task:
-            warehouse_id: ${var.warehouse_id}
-            file:
-              path: ../src/conferencia/00-conferencia-bronze.sql
+        # Etapa 1: Dispara o Job de Ingestão da Bronze
+        - task_key: ingestao_bronze
+          run_job_task:
+            job_id: ${resources.jobs.vertice_ingestao_bronze.id}
+
+        # Etapa 2: Dispara o Job de Validação da Bronze (após o término da ingestão)
+        - task_key: validacao_bronze
+          depends_on:
+            - task_key: ingestao_bronze
+          run_job_task:
+            job_id: ${resources.jobs.vertice_validacao_bronze.id}

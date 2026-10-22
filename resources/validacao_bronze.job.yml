@@ -1,0 +1,17 @@
+# Job de Validação / Conferência da Camada Bronze
+#
+# Executa a query de conferência das 9 tabelas da bronze contra a contagem esperada (seed 42).
+# Se houver divergência, aciona raise_error() e interrompe o pipeline.
+
+resources:
+  jobs:
+    vertice_validacao_bronze:
+      name: vertice_validacao_bronze
+      description: Validação e conferência de integridade das 9 tabelas da Bronze
+
+      tasks:
+        - task_key: conferencia_bronze
+          sql_task:
+            warehouse_id: ${var.warehouse_id}
+            file:
+              path: ../src/conferencia/00-conferencia-bronze.sql
