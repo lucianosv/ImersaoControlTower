@@ -130,7 +130,8 @@ O escopo é o mesmo no `dev` e no `prod`: os dois targets apontam para o mesmo w
 - [x] Cronograma e variáveis do bundle ajustados ao workspace `dbc-55900bb8-c180`
 - [x] Credenciais do S3 migradas para o secret scope `vertice` (fora do repositório)
 - [x] Pipeline verde com o escopo: ingestão 2 min 15 s + validação 12 s, bronze com as 9 tabelas
-- [ ] Rotacionar a chave do Supabase (a que estava no commit `14e8de0` continua no histórico do git)
+- [ ] **Depois da aula:** rotacionar a chave do Supabase e descartar o bucket (decisão consciente:
+      a chave antiga segue no histórico do git, mas só dá acesso ao data lake da imersão)
 - [ ] Quando os jobs passarem a ter agendamento (segunda 6h), revisar o `PAUSED` do target `dev`
 
 ## Riscos e Mitigações
@@ -139,7 +140,7 @@ O escopo é o mesmo no `dev` e no `prod`: os dois targets apontam para o mesmo w
 |---|---|---|
 | Ingestão parcial (upload interrompido) | Alto | A validação aborta o pipeline antes do Silver; a mensagem de erro aponta `00-carregar-dados` e `01-ingestao-bronze` |
 | `mode: development` prefixa nomes e quebra o SQL | Alto | Nunca usar `mode: development`; pausar agendamento com `presets` |
-| Credenciais do S3 no YAML do repositório | Alto | Mover para `variables` do bundle e injecting no deploy |
+| Chave do S3 no histórico do git (repo público) | Médio | A chave em uso só existe no secret scope `vertice`; a do histórico é descartada com o bucket depois da aula |
 | Job editado na interface do workspace trava o `bundle deploy` | Médio | Editar sempre o YAML do repositório e redeployar |
 
 ## Open Questions

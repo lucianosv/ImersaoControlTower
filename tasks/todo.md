@@ -42,5 +42,8 @@
 - [x] Notebook de aquecimento apontando para o mesmo data lake (`DataLakeVertice`) e lendo a chave do escopo
 - [x] `databricks.yml` sem as variáveis de credencial mortas (o escopo é o mecanismo)
 - [x] Referências do material corrigidas para os nomes em uso (bucket, endpoint, região, job, profile)
-- [ ] Rotacionar a chave do Supabase e limpar o histórico do git (`14e8de0` ainda tem a chave antiga)
+- [ ] **Depois da aula:** rotacionar a chave do Supabase e descartar o bucket. A chave antiga
+      (`6c5c71…`) continua no histórico do git (`14e8de0`) e o repositório é público — decisão
+      consciente, porque a chave só dá acesso ao data lake da imersão e a chave nova já está
+      no secret scope `vertice`. Rotacionar deixa a chave do histórico sem valor.
 - [ ] Decidir o destino das pastas `aulas/z_aula-*_old` (material arquivado, com o workspace antigo)
