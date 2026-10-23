@@ -1,0 +1,17 @@
+# Job Atômico (Nível 3): Métricas Governadas
+#
+# Cria e atualiza a Metric View lakehouse_vertice.gold.mv_projetos no Unity Catalog.
+# Pode ser executado isoladamente no SQL Warehouse.
+
+resources:
+  jobs:
+    vertice_metricas_governadas:
+      name: vertice_metricas_governadas
+      description: Publicação da Metric View governada mv_projetos no Unity Catalog
+
+      tasks:
+        - task_key: metricas_governadas
+          sql_task:
+            warehouse_id: ${var.warehouse_id}
+            file:
+              path: ../src/metricas/metricas.sql

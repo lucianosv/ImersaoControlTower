@@ -6,6 +6,7 @@
 #   3. Camada Gold (Pipeline DLT independente vertice_camada_gold)
 #   4. Status com IA (SQL Task status_estruturado.sql no SQL Warehouse)
 #   5. Testes de Qualidade (SQL Task testes.sql no SQL Warehouse)
+#   6. Métricas Governadas (SQL Task metricas.sql no SQL Warehouse)
 #
 # Cada etapa roda apenas após o término com sucesso da anterior,
 # garantindo o uso de no máximo 1 máquina por vez (compatível com cota Free Tier).
@@ -14,7 +15,7 @@ resources:
   jobs:
     vertice_farol:
       name: vertice_farol
-      description: Pipeline Farol da Vértice Tecnologia - Orquestração sequencial sem concorrência (Bronze -> Silver -> Gold -> IA -> Testes)
+      description: Pipeline Farol da Vértice Tecnologia - Orquestração sequencial sem concorrência (Bronze -> Silver -> Gold -> IA -> Testes -> Métricas)
 
       tasks:
         # Etapa 1: Ingestão e Validação da Bronze
@@ -53,3 +54,12 @@ resources:
             warehouse_id: ${var.warehouse_id}
             file:
               path: ../src/testes/testes.sql
+
+        # Etapa 6: Métricas Governadas (Metric View mv_projetos)
+        - task_key: metricas_governadas
+          depends_on:
+            - task_key: testes_de_qualidade
+          sql_task:
+            warehouse_id: ${var.warehouse_id}
+            file:
+              path: ../src/metricas/metricas.sql

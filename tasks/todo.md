@@ -42,5 +42,10 @@
 - [x] Executar e auditar a tabela `lakehouse_vertice.gold.status_estruturado` (ia: 163, regra: 2.954, palavra_chave: 794; PRJ-011: falta_sre com 12 semanas e 57 dias de impacto)
 
 ## Entrega 5: Métricas Governadas (Aula 03 - Prompt 5)
-- [ ] Criar Metric Views e vincular ao Genie / Dashboard
+- [x] Criar Metric View no Unity Catalog em `src/metricas/metricas.sql` (`lakehouse_vertice.gold.mv_projetos`)
+- [x] Criar job atômico `resources/metricas_governadas.job.yml` (`vertice_metricas_governadas`)
+- [x] Integrar etapa `metricas_governadas` no orquestrador mestre `resources/vertice.job.yml`
+- [x] Executar e auditar métricas via `scripts/conferir_metricas.sql` (SPI 0,92 · CPI 0,97 · R$ 6,47 mi de estouro · 7 críticos · 4 melancias)
+- [x] Executar suíte de validação oficial `99-verificacao.sql` (**20 de 20 testes "ok"**)
+
 
