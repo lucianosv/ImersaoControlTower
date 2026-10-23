@@ -54,7 +54,7 @@ targets:
 
     variables:
       sql_warehouse_id: 72f6049c981e743b
-      genie_space_id: 01f1cb513eb91dd58208123de3d84ad4
+      genie_space_id: 01f1cef91e391e499f841a1901bb967a
       genie_space_name: Farol · Diretoria + Contratos
       postgres_branch: projects/farol-torre/branches/production
       postgres_database: projects/farol-torre/branches/production/databases/databricks-postgres

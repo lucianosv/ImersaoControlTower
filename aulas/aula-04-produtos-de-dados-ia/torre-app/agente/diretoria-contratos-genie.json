@@ -37,9 +37,6 @@
         "identifier": "lakehouse_vertice.gold.projeto_situacao_atual"
       },
       {
-        "identifier": "lakehouse_vertice.gold.score_estouro_30d"
-      },
-      {
         "identifier": "lakehouse_vertice.gold.status_estruturado"
       },
       {
@@ -67,8 +64,7 @@
           "CONTRATOS: são 8 contratos de fornecedor e SaaS (CodeForge, Pixel Design Studio, QualiTest Brasil, SecureOps Segurança, DataPrime Analytics, NuvemSul Cloud, Observa360, CodeVault), um por linha em contratos, com os campos extraídos por IA (valor_anual, data_fim_vigencia, renovacao_automatica, aviso_previo_dias, multa_atraso_pct_dia, teto_multa_pct, sla, reajuste) e o texto das cláusulas em clausulas. Quando disser o que o contrato diz, cite o número da cláusula e um trecho curto. Para um contrato específico, filtre por fornecedor com LIKE (ex.: fornecedor LIKE '%NuvemSul%').\n",
           "MULTA de fornecedor = valor da entrega × multa_atraso_pct_dia × dias de atraso, limitada a teto_multa_pct, em % (divida por 100). Dias de atraso: até a entrega se entregue (dias_de_atraso_na_entrega), até hoje se em aberto. Só conta o que foi prometido na vigência atual: data_prometida > add_months(data_fim_vigencia, -12). Junte entregas_fornecedor com contratos por lower(fornecedor). Use a SQL de exemplo da multa.\n",
           "AVISO PRÉVIO: data limite = date_sub(data_fim_vigencia, aviso_previo_dias). Já passou = data limite antes de 16/10/2026; vence em breve = até 60 dias. Se renovacao_automatica, o contrato renova sozinho se ninguém avisar; se não, o serviço para se ninguém formalizar a renovação.\n",
-          "Quando citar um projeto, use projeto_id e nome (ex.: PRJ-011 · Checkout e meios de pagamento - Supermercados Bom Preço).\n",
-          "O que vai dar errado no próximo mês: score_estouro_30d (prob_estouro_30d de 0 a 1, ranking, faixa_risco, principais_fatores), o modelo treinado na noite 3. Use a data_referencia mais recente e ordene por ranking.\n"
+          "Quando citar um projeto, use projeto_id e nome (ex.: PRJ-011 · Checkout e meios de pagamento - Supermercados Bom Preço).\n"
         ]
       }
     ],

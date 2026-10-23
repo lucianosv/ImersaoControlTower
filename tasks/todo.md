@@ -48,4 +48,22 @@
 - [x] Executar e auditar métricas via `scripts/conferir_metricas.sql` (SPI 0,92 · CPI 0,97 · R$ 6,47 mi de estouro · 7 críticos · 4 melancias)
 - [x] Executar suíte de validação oficial `99-verificacao.sql` (**20 de 20 testes "ok"**)
 
+## Aula 04: Produtos de Dados & IA
 
+### Prompt 1 · Agente de Contratos
+- [x] Extração de PDFs contratuais com `ai_parse_document` em `lakehouse_vertice.silver.documentos_elementos`
+- [x] Extração de 72 cláusulas em `lakehouse_vertice.silver.contratos_clausulas`
+- [x] Extração estruturada com schema JSON tipado em `lakehouse_vertice.gold.contratos`
+- [x] Validação oficial com `99-verificacao.sql` (11 de 11 testes "ok")
+- [x] Publicação do Genie Agent **"Farol · Diretoria + Contratos"** (`01f1cef91e391e499f841a1901bb967a`)
+
+### Prompt 2 & 3 · Databricks App (Farol Torre) & Lakebase
+- [x] Provisionar projeto Lakebase Postgres `farol-torre`
+- [x] Criar e popular `lakehouse_vertice.gold.score_estouro_30d` (18 alto · 4 médio · 19 baixo; PRJ-024 46%)
+- [x] Configurar queries analíticas (`kpis.sql`, `projetos_risco.sql`, `pessoas_ociosas.sql`)
+- [x] Configurar rotas do backend (`/api/score-estouro`, `/api/decisoes`, `/api/quem-sou`)
+- [x] Validação completa do app com `databricks apps validate` (tipagem, lint, testes e build)
+- [x] Deploy do bundle com service principal criado
+- [x] Conceder permissões no Unity Catalog (`USE CATALOG lakehouse_vertice`, `SELECT` na gold e silver)
+- [x] Deploy bem-sucedido com `databricks apps deploy farol-torre` (`SUCCEEDED`, status `RUNNING`)
+- [x] URL do App no ar: `https://farol-torre-7474652991272888.aws.databricksapps.com`
