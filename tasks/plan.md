@@ -46,6 +46,7 @@ A arquitetura foi estruturada em **3 Níveis de Modularidade** para garantir fle
 - [x] **Entrega 3 (Gold Desacoplada & Testes):** Concluída via pipeline DLT `vertice_camada_gold` e `vertice_testes_qualidade` (todos os 10 testes passando).
 - [x] **Entrega 4 (IA nos Status):** Concluída via `src/ia/status_estruturado.sql` e job `vertice_status_com_ia` (3.911 status classificados com sucesso).
 - [x] **Entrega 5 (Métricas Governadas & Validação):** Concluída via `src/metricas/metricas.sql` (`lakehouse_vertice.gold.mv_projetos`) e `vertice_metricas_governadas` (validação oficial 20/20 ok).
-- [ ] **Noite 4 (Produtos de Dados & IA):** Contratos em PDF, Genie Agent, Databricks App e Lakebase.
-
-
+- [x] **Noite 4 (Produtos de Dados & IA):**
+  - [x] **Prompt 1 (Agente de Contratos):** Extração de PDFs contratuais com `ai_parse_document` e schema JSON tipado (`silver.contratos_clausulas` e `gold.contratos`), validado 11/11 com `99-verificacao.sql` e Genie Agent **"Farol · Diretoria + Contratos"** (`01f1cef91e391e499f841a1901bb967a`).
+  - [x] **Prompt 2 (Databricks App Farol Torre):** Aplicação AppKit (React + TypeScript) em execução no Databricks Apps (`https://farol-torre-7474652991272888.aws.databricksapps.com`), com telas de Projetos em Risco, Simulador de Realocação e Genie Chat embutido.
+  - [x] **Prompt 3 (Lakebase Postgres):** Projeto `farol-torre` provisionado, tabela transacional `torre.decisoes` criada automaticamente na inicialização do app e integrada ao simulador para aprovação de decisões de governança.
