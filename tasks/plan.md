@@ -1,18 +1,27 @@
-# Implementation Plan: Projeto Farol e Ingestão Bronze
+# Implementation Plan: Torre de Controle (Projeto Farol)
 
 ## Overview
 
-Este plano cobre o pipeline completo de dados da imersão Control Tower na Vértice Tecnologia:
-1. **Ingestão Automatizada da Camada Bronze** (`vertice_ingestao_bronze`):
-   - Ingestão da API pública BrasilAPI (feriados nacionais) via `src/ingestao/01_ingestao_api.py`
-   - Ingestão do Data Lake S3/Supabase (`DataLakeCentralTower`) via boto3 e carga das 9 tabelas da bronze via `src/ingestao/02_ingestao_boto3.py`
-2. **Validação da Bronze** (`vertice_validacao_bronze`):
-   - Conferência de integridade das 9 tabelas da bronze via `src/conferencia/00-conferencia-bronze.sql`
-3. **Pipeline Declarativo Medalhão** (`vertice_medalhao`):
-   - Camada Silver: 7 tabelas unificadas, tratadas e validadas com `EXPECT` via `src/silver/`
-   - Camada Gold: (Próxima entrega - Prompt 03)
-4. **Torre de Controle / Farol** (`vertice_farol`):
-   - Orquestrador principal encadeando: Ingestão Bronze -> Validação Bronze -> Medalhão (Silver/Gold) -> IA -> Métricas
+Este plano cobre a arquitetura, orquestração e implementação do pipeline completo de dados da imersão Control Tower na Vértice Tecnologia.
+
+A arquitetura foi estruturada em **3 Níveis de Modularidade** para garantir flexibilidade de desenvolvimento, isolamento de falhas e respeito estrito ao limite de computação do Databricks Free Tier (1 máquina serverless por vez):
+
+1. **Nível 3 (Atômico / Individual - para debug e reprocessamento cirúrgico):**
+   - `vertice_bronze_api` ([resources/bronze_api.job.yml](file:///c:/Jornada%20de%20Dados/ImersaoControlTower-main/resources/bronze_api.job.yml)): Ingestão da API pública BrasilAPI via `src/ingestao/01_ingestao_api.py`.
+   - `vertice_bronze_datalake` ([resources/bronze_datalake.job.yml](file:///c:/Jornada%20de%20Dados/ImersaoControlTower-main/resources/bronze_datalake.job.yml)): Ingestão do Data Lake S3/Supabase (`DataLakeVertice`) via boto3 e carga das 9 tabelas da bronze via `src/ingestao/02_ingestao_boto3.py`.
+   - `vertice_validacao_bronze` ([resources/validacao_bronze.job.yml](file:///c:/Jornada%20de%20Dados/ImersaoControlTower-main/resources/validacao_bronze.job.yml)): Conferência de integridade das 9 tabelas da bronze via `src/conferencia/00-conferencia-bronze.sql`.
+   - `vertice_testes_qualidade` ([resources/testes_qualidade.job.yml](file:///c:/Jornada%20de%20Dados/ImersaoControlTower-main/resources/testes_qualidade.job.yml)): Execução isolada dos 10 testes de qualidade automatizados via `src/testes/testes.sql`.
+
+2. **Nível 2 (Por Camada - independentes e desacoplados):**
+   - `vertice_camada_bronze` ([resources/camada_bronze.job.yml](file:///c:/Jornada%20de%20Dados/ImersaoControlTower-main/resources/camada_bronze.job.yml)): Encadeia em série API -> Data Lake -> Validação.
+   - `vertice_camada_silver` ([resources/silver.pipeline.yml](file:///c:/Jornada%20de%20Dados/ImersaoControlTower-main/resources/silver.pipeline.yml)): Pipeline DLT exclusivo da Silver (`src/silver/**`), unificando ClickUp, Excel e MS Project.
+   - `vertice_camada_gold` ([resources/gold.pipeline.yml](file:///c:/Jornada%20de%20Dados/ImersaoControlTower-main/resources/gold.pipeline.yml)): Pipeline DLT exclusivo da Gold (`src/gold/**`), materializando métricas analíticas e de alocação.
+
+3. **Nível 1 (Orquestrador Mestre Geral):**
+   - `vertice_farol` ([resources/vertice.job.yml](file:///c:/Jornada%20de%20Dados/ImersaoControlTower-main/resources/vertice.job.yml)): Orquestrador geral que encadeia a esteira sequencial ponta a ponta:
+     `camada_bronze` -> `camada_silver` -> `camada_gold` -> `testes_de_qualidade`.
+
+---
 
 ## Architecture Decisions
 
@@ -23,12 +32,18 @@ Este plano cobre o pipeline completo de dados da imersão Control Tower na Vért
 - **Ambiente**: Databricks Free Edition (Serverless)
 - **SQL Warehouse**: `72f6049c981e743b` (Serverless Starter Warehouse)
 - **Catálogo**: `lakehouse_vertice` com schemas `bronze`, `silver`, `gold`
+- **Isolamento de Silver e Gold**:
+  - Silver e Gold mantidos como **pipelines DLT separados**.
+  - No orquestrador Farol, o Databricks executa as etapas com dependência estrita (`depends_on`), garantindo que apenas 1 máquina de computação esteja ativa por vez.
+- **Sem Agendamentos Automáticos (`schedule: None`)**: Disparos manuais sob demanda para evitar consumo indevido de cotas.
 
-## Status Atual
-- [x] Correção de workspace e profile nos arquivos `CLAUDE.md` e `databricks.yml`
-- [x] Padronização completa do código em `src/ingestao`, `src/conferencia`, `src/silver`
-- [x] Job `vertice_ingestao_bronze` configurado e testado com credenciais reais
-- [x] Job `vertice_validacao_bronze` validado com sucesso
-- [x] Pipeline Lakeflow `vertice_medalhao` criado, deployado e executado com sucesso
-- [x] 7 tabelas criadas e auditadas na `lakehouse_vertice.silver`
-- [x] Job orquestrador `vertice_farol` atualizado
+---
+
+## Status das Entregas
+
+- [x] **Entrega 1 (Bronze & Validação):** Concluída, validada e modularizada em jobs individuais e de camada.
+- [x] **Entrega 2 (Silver Desacoplada):** Concluída via pipeline DLT `vertice_camada_silver` (4.917 tarefas, R$ 193,35 mi em custos, 520 colaboradores).
+- [x] **Entrega 3 (Gold Desacoplada & Testes):** Concluída via pipeline DLT `vertice_camada_gold` e `vertice_testes_qualidade` (todos os 10 testes passando).
+- [x] **Orquestrador Mestre Farol (`vertice_farol`):** Testado e validado ponta a ponta em ~7.5 minutos.
+- [ ] **Entrega 4 (IA nos Status):** Extração de status estruturado com GenAI em `src/ia/status_estruturado.sql`.
+- [ ] **Entrega 5 (Métricas Governadas & Genie/Dashboard):** Metric views e catálogo semântico.

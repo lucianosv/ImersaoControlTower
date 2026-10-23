@@ -1,29 +1,39 @@
 # Todo List: Imersão Control Tower
 
-## Ingestão Bronze (Aula 02)
+## Ingestão Bronze (Aula 02 / Refatoração Modular)
 - [x] Padronizar notebooks para `src/ingestao/01_ingestao_api.py` e `src/ingestao/02_ingestao_boto3.py`
-- [x] Configurar definição do job `vertice_ingestao_bronze` em `resources/ingestao_bronze.job.yml`
-- [x] Configurar credenciais reais do Supabase S3
+- [x] Modularizar jobs da Bronze em 3 níveis (Atômico e Camada):
+  - [x] `resources/bronze_api.job.yml` (`vertice_bronze_api`): Ingestão da API pública BrasilAPI
+  - [x] `resources/bronze_datalake.job.yml` (`vertice_bronze_datalake`): Ingestão S3/Supabase das 9 tabelas
+  - [x] `resources/validacao_bronze.job.yml` (`vertice_validacao_bronze`): Conferência das 9 tabelas
+  - [x] `resources/camada_bronze.job.yml` (`vertice_camada_bronze`): Orquestrador da camada Bronze
+- [x] Configurar credenciais reais do Supabase S3 via secret scope / parâmetros
 - [x] Executar e testar ingestão no Databricks (`TERMINATED SUCCESS`)
 
 ## Entrega 1: O Bundle & Conferência da Bronze (Aula 03 - Prompt 1)
-- [x] Inicializar Git no projeto e conectar ao fork no GitHub
+- [x] Inicializar Git no projeto e conectar ao fork no GitHub (`lucianosv/ImersaoControlTower`)
 - [x] Configurar `databricks.yml` com workspace `dbc-55900bb8-c180` e warehouse `72f6049c981e743b`
 - [x] Padronizar conferência em `src/conferencia/00-conferencia-bronze.sql`
-- [x] Criar job `vertice_validacao_bronze` em `resources/validacao_bronze.job.yml`
-- [x] Executar validação das 9 tabelas da bronze com sucesso
+- [x] Executar validação das 9 tabelas da bronze com sucesso via `vertice_validacao_bronze`
 
-## Entrega 2: Camada Silver (Aula 03 - Prompt 2)
-- [x] Padronizar scripts SQL em `src/silver/` (01 a 05)
-- [x] Criar pipeline Lakeflow Spark Declarative em `resources/vertice_medalhao.pipeline.yml`
-- [x] Integrar etapa `medalhao` no job orquestrador `resources/vertice.job.yml`
+## Entrega 2: Camada Silver Desacoplada (Aula 03 - Prompt 2)
+- [x] Padronizar scripts SQL em `src/silver/` (01 a 05: projetos, tarefas, status/custos, pessoas, fornecedores)
+- [x] Criar pipeline DLT independente em `resources/silver.pipeline.yml` (`vertice_camada_silver`)
 - [x] Executar deploy no Databricks (`databricks bundle deploy --profile DEFAULT`)
-- [x] Executar pipeline `vertice_medalhao` no Databricks com sucesso (`UPDATE COMPLETED`)
-- [x] Auditar as 7 tabelas e métricas na `lakehouse_vertice.silver` (custo R$ 193,35 mi, 520 colaboradores, etc.)
+- [x] Executar pipeline `vertice_camada_silver` com sucesso (`UPDATE COMPLETED`)
+- [x] Auditar as tabelas e métricas na `lakehouse_vertice.silver` (custo R$ 193,35 mi, 520 colaboradores, 4.917 tarefas)
 
-## Entrega 3: Camada Gold & Testes (Aula 03 - Prompt 3)
-- [ ] Modelar camada Gold em `src/gold/`
-- [ ] Adicionar testes de qualidade em `src/testes/testes.sql`
+## Entrega 3: Camada Gold Desacoplada & Testes (Aula 03 - Prompt 3)
+- [x] Modelar camada Gold em `src/gold/`:
+  - [x] `01-fato-projeto-semana.sql`: Evolução temporal EVM (PV, EV, AC acumulados, SPI, CPI)
+  - [x] `02-situacao-e-pessoas.sql`: Fotografia de hoje (`projeto_situacao_atual`) e alocação (`utilizacao_pessoa_semana`)
+- [x] Criar pipeline DLT independente em `resources/gold.pipeline.yml` (`vertice_camada_gold`)
+- [x] Criar suíte de 10 testes de qualidade automatizados em `src/testes/testes.sql`
+- [x] Criar job atômico de testes em `resources/testes_qualidade.job.yml` (`vertice_testes_qualidade`)
+- [x] Atualizar orquestrador mestre `resources/vertice.job.yml` (`vertice_farol`) em sequência estrita:
+  `camada_bronze` -> `camada_silver` -> `camada_gold` -> `testes_de_qualidade`
+- [x] Validar execução do pipeline completo sem concorrência (1 máquina por vez, sem erro de cota)
+- [x] Executar suíte de 10 testes com sucesso (`10 ok / 0 erros`)
 
 ## Entrega 4: IA nos Textos de Status (Aula 03 - Prompt 4)
 - [ ] Extrair status estruturado com GenAI em `src/ia/status_estruturado.sql`
