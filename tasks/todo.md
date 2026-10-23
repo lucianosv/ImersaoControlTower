@@ -36,7 +36,11 @@
 - [x] Executar suíte de 10 testes com sucesso (`10 ok / 0 erros`)
 
 ## Entrega 4: IA nos Textos de Status (Aula 03 - Prompt 4)
-- [ ] Extrair status estruturado com GenAI em `src/ia/status_estruturado.sql`
+- [x] Extrair status estruturado com GenAI em `src/ia/status_estruturado.sql`
+- [x] Criar job atômico `resources/status_com_ia.job.yml` (`vertice_status_com_ia`)
+- [x] Integrar tarefa `status_com_ia` no orquestrador mestre `resources/vertice.job.yml`
+- [x] Executar e auditar a tabela `lakehouse_vertice.gold.status_estruturado` (ia: 163, regra: 2.954, palavra_chave: 794; PRJ-011: falta_sre com 12 semanas e 57 dias de impacto)
 
 ## Entrega 5: Métricas Governadas (Aula 03 - Prompt 5)
 - [ ] Criar Metric Views e vincular ao Genie / Dashboard
+

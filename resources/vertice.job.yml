@@ -4,16 +4,17 @@
 #   1. Camada Bronze (Job vertice_camada_bronze -> API -> Data Lake -> Validação)
 #   2. Camada Silver (Pipeline DLT independente vertice_camada_silver)
 #   3. Camada Gold (Pipeline DLT independente vertice_camada_gold)
-#   4. Testes de Qualidade (SQL Task testes.sql no SQL Warehouse)
+#   4. Status com IA (SQL Task status_estruturado.sql no SQL Warehouse)
+#   5. Testes de Qualidade (SQL Task testes.sql no SQL Warehouse)
 #
-# Cada camada roda apenas após o término com sucesso da anterior,
+# Cada etapa roda apenas após o término com sucesso da anterior,
 # garantindo o uso de no máximo 1 máquina por vez (compatível com cota Free Tier).
 
 resources:
   jobs:
     vertice_farol:
       name: vertice_farol
-      description: Pipeline Farol da Vértice Tecnologia - Orquestração sequencial sem concorrência (Bronze -> Silver -> Gold -> Testes)
+      description: Pipeline Farol da Vértice Tecnologia - Orquestração sequencial sem concorrência (Bronze -> Silver -> Gold -> IA -> Testes)
 
       tasks:
         # Etapa 1: Ingestão e Validação da Bronze
@@ -35,10 +36,19 @@ resources:
           pipeline_task:
             pipeline_id: ${resources.pipelines.vertice_camada_gold.id}
 
-        # Etapa 4: Testes de Qualidade
-        - task_key: testes_de_qualidade
+        # Etapa 4: Extração Estruturada com IA
+        - task_key: status_com_ia
           depends_on:
             - task_key: camada_gold
+          sql_task:
+            warehouse_id: ${var.warehouse_id}
+            file:
+              path: ../src/ia/status_estruturado.sql
+
+        # Etapa 5: Testes de Qualidade
+        - task_key: testes_de_qualidade
+          depends_on:
+            - task_key: status_com_ia
           sql_task:
             warehouse_id: ${var.warehouse_id}
             file:

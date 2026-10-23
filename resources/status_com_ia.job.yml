@@ -1,0 +1,18 @@
+# Job Atômico (Nível 3): Extração de Status com IA
+#
+# Executa a classificação e extração semântica com GenAI (ai_classify + ai_extract)
+# dos textos de status semanal dos gerentes, populando a tabela gold.status_estruturado.
+# Pode ser disparado isoladamente para reprocessamento cirúrgico ou testes.
+
+resources:
+  jobs:
+    vertice_status_com_ia:
+      name: vertice_status_com_ia
+      description: Extração estruturada com IA dos relatórios de status semanal dos gerentes
+
+      tasks:
+        - task_key: status_com_ia
+          sql_task:
+            warehouse_id: ${var.warehouse_id}
+            file:
+              path: ../src/ia/status_estruturado.sql

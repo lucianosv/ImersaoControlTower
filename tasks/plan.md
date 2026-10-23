@@ -44,6 +44,6 @@ A arquitetura foi estruturada em **3 Níveis de Modularidade** para garantir fle
 - [x] **Entrega 1 (Bronze & Validação):** Concluída, validada e modularizada em jobs individuais e de camada.
 - [x] **Entrega 2 (Silver Desacoplada):** Concluída via pipeline DLT `vertice_camada_silver` (4.917 tarefas, R$ 193,35 mi em custos, 520 colaboradores).
 - [x] **Entrega 3 (Gold Desacoplada & Testes):** Concluída via pipeline DLT `vertice_camada_gold` e `vertice_testes_qualidade` (todos os 10 testes passando).
-- [x] **Orquestrador Mestre Farol (`vertice_farol`):** Testado e validado ponta a ponta em ~7.5 minutos.
-- [ ] **Entrega 4 (IA nos Status):** Extração de status estruturado com GenAI em `src/ia/status_estruturado.sql`.
+- [x] **Entrega 4 (IA nos Status):** Concluída via `src/ia/status_estruturado.sql` e job `vertice_status_com_ia` (3.911 status classificados com sucesso).
 - [ ] **Entrega 5 (Métricas Governadas & Genie/Dashboard):** Metric views e catálogo semântico.
+
